@@ -3,42 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./dist/types/index.js",
-  "types": "./dist/types/index.d.ts",
-  "exports": {
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.js"
-    },
-    "./types/entity": {
-      "types": "./dist/types/entity.d.ts",
-      "import": "./dist/types/entity.js"
-    },
-    "./types/agent": {
-      "types": "./dist/types/agent.d.ts",
-      "import": "./dist/types/agent.js"
-    },
-    "./types/brain": {
-      "types": "./dist/types/brain.d.ts",
-      "import": "./dist/types/brain.js"
-    },
-    "./types/account": {
-      "types": "./dist/types/account.d.ts",
-      "import": "./dist/types/account.js"
-    },
-    "./enums": {
-      "types": "./dist/enums/index.d.ts",
-      "import": "./dist/enums/index.js"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js"
-    },
-    "./utils/path": {
-      "types": "./dist/utils/path.d.ts",
-      "import": "./dist/utils/path.js"
-    }
-  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
