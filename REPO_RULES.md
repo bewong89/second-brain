@@ -186,6 +186,37 @@ Examples:
   their specific operations
 - Never log full API keys -- log only the keyId prefix for debugging
 
+## Agent Workflow
+
+### Using the `coder` Subagent
+
+Use the `@coder` subagent for implementing features, fixing bugs, or making
+code changes. It works in isolated git worktrees to keep `main` clean.
+
+**Invoking the coder:**
+```
+@coder <task description>
+```
+
+**Workflow per task:**
+1. Create a new worktree: `git worktree add ../second-brain-{branch-name} -b {branch-name} origin/main`
+2. Navigate to the worktree: `cd /Users/bewong/Development/second-brain-{branch-name}`
+3. Read `REPO_RULES.md` from the worktree root and follow all conventions
+4. Implement the required changes
+5. Commit: `git add . && git commit -m "<conventional-commit-message>"`
+6. Push the branch: `git push -u origin {branch-name}`
+7. Create a GitHub PR: `gh pr create --title "<title>" --body "<body>"`
+8. Report back with: worktree path, branch name, commit hash, PR URL
+
+**Parallelism:** Tasks with no dependencies on each other are run in parallel by
+launching multiple `@coder` agents simultaneously. Tasks with dependencies are run
+sequentially -- each coder completes and its PR is merged before the next task starts.
+
+**PR descriptions must include:**
+- What was implemented
+- What files changed
+- Any relevant dependency notes (e.g. "Depends on PR #N -- must merge after")
+
 ## Adding a New Package
 
 1. Create directory under `packages/<name>/`
