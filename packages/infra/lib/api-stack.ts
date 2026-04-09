@@ -4,9 +4,15 @@ import {
   Stack,
   StackProps,
   aws_apigateway as apigateway,
+  aws_dynamodb as dynamodb,
+  aws_iam as iam,
   aws_lambda as lambda,
+  aws_lambda_nodejs as lambda_nodejs,
+  aws_s3 as s3,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import { StorageStack } from './storage-stack.js';
+import { DatabaseStack } from './database-stack.js';
 
 const STAGE_CONTEXT_KEY = 'stage';
 
@@ -15,6 +21,7 @@ const STAGE_CONTEXT_KEY = 'stage';
  *
  * Creates a REST API with user and admin endpoints backed by Lambda functions.
  * Uses Lambda proxy integration for all endpoints.
+ * Lambda functions have IAM permissions to access S3 and DynamoDB.
  */
 export class ApiStack extends Stack {
   /** The REST API instance */
@@ -26,10 +33,18 @@ export class ApiStack extends Stack {
   /** The API ID */
   public readonly apiId: string;
 
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props?: StackProps & {
+      storageStack: StorageStack;
+      databaseStack: DatabaseStack;
+    }
+  ) {
     super(scope, id, props);
 
     const stage = this.getStageFromContext();
+    const { storageStack, databaseStack } = props;
 
     // Create the REST API
     this.api = new apigateway.RestApi(this, 'RestApi', {
@@ -47,31 +62,60 @@ export class ApiStack extends Stack {
     this.apiId = this.api.restApiId;
 
     // Create Lambda functions for user endpoints
-    const listEntitiesFunction = this.createLambdaFunction(
+    const listEntitiesFunction = this.createUserLambdaFunction(
       'ListEntities',
-      stage
+      stage,
+      storageStack.storageBucket
     );
-    const listAgentsFunction = this.createLambdaFunction(
+    const listAgentsFunction = this.createUserLambdaFunction(
       'ListAgents',
-      stage
+      stage,
+      storageStack.storageBucket
     );
-    const getAgentFunction = this.createLambdaFunction('GetAgent', stage);
-    const getSectionFunction = this.createLambdaFunction('GetSection', stage);
+    const getAgentFunction = this.createUserLambdaFunction(
+      'GetAgent',
+      stage,
+      storageStack.storageBucket
+    );
+    const getSectionFunction = this.createUserLambdaFunction(
+      'GetSection',
+      stage,
+      storageStack.storageBucket
+    );
 
     // Create Lambda functions for admin endpoints
-    const createAccountFunction = this.createLambdaFunction(
+    const createAccountFunction = this.createAdminLambdaFunction(
       'CreateAccount',
-      stage
+      stage,
+      storageStack.storageBucket,
+      databaseStack.accountsTable
     );
-    const createApiKeyFunction = this.createLambdaFunction('CreateApiKey', stage);
-    const createEntityFunction = this.createLambdaFunction(
+    const createApiKeyFunction = this.createAdminLambdaFunction(
+      'CreateApiKey',
+      stage,
+      storageStack.storageBucket,
+      databaseStack.apiKeysTable
+    );
+    const createEntityFunction = this.createAdminLambdaFunction(
       'CreateEntity',
-      stage
+      stage,
+      storageStack.storageBucket,
+      databaseStack.accountsTable
     );
-    const createAgentFunction = this.createLambdaFunction('CreateAgent', stage);
+    const createAgentFunction = this.createAdminLambdaFunction(
+      'CreateAgent',
+      stage,
+      storageStack.storageBucket,
+      databaseStack.accountsTable
+    );
 
     // Setup user endpoints with API key requirement
-    this.setupUserEndpoints(listEntitiesFunction, listAgentsFunction, getAgentFunction, getSectionFunction);
+    this.setupUserEndpoints(
+      listEntitiesFunction,
+      listAgentsFunction,
+      getAgentFunction,
+      getSectionFunction
+    );
 
     // Setup admin endpoints
     this.setupAdminEndpoints(
@@ -96,21 +140,80 @@ export class ApiStack extends Stack {
   }
 
   /**
-   * Creates a Lambda function with the given name
+   * Creates a Lambda function for user endpoints (read-only S3 access)
    */
-  private createLambdaFunction(name: string, stage: string): lambda.Function {
-    return new lambda.Function(this, name, {
+  private createUserLambdaFunction(
+    name: string,
+    stage: string,
+    storageBucket: s3.Bucket
+  ): lambda_nodejs.NodejsFunction {
+    const fn = new lambda_nodejs.NodejsFunction(this, name, {
       functionName: `second-brain-${stage}-${this.toKebabCase(name)}`,
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromInline(`
-        exports.handler = async (event) => {
-          return { statusCode: 200, body: JSON.stringify({ message: '${name} stub' }) };
-        };
-      `),
+      handler: 'handler',
+      entry: `${__dirname}/handlers/${this.toKebabCase(name)}-handler.js`,
       timeout: Duration.seconds(30),
       memorySize: 256,
+      environment: {
+        STORAGE_BUCKET_NAME: storageBucket.bucketName,
+        STORAGE_BUCKET_ARN: storageBucket.bucketArn,
+      },
     });
+
+    // Grant S3 read permissions
+    storageBucket.grantRead(fn);
+
+    // Add inline policy for S3 ListBucket
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:ListBucket'],
+        resources: [storageBucket.bucketArn],
+      })
+    );
+
+    return fn;
+  }
+
+  /**
+   * Creates a Lambda function for admin endpoints (full S3 + DynamoDB access)
+   */
+  private createAdminLambdaFunction(
+    name: string,
+    stage: string,
+    storageBucket: s3.Bucket,
+    dynamoTable: dynamodb.Table
+  ): lambda_nodejs.NodejsFunction {
+    const fn = new lambda_nodejs.NodejsFunction(this, name, {
+      functionName: `second-brain-${stage}-${this.toKebabCase(name)}`,
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'handler',
+      entry: `${__dirname}/handlers/${this.toKebabCase(name)}-handler.js`,
+      timeout: Duration.seconds(30),
+      memorySize: 256,
+      environment: {
+        STORAGE_BUCKET_NAME: storageBucket.bucketName,
+        STORAGE_BUCKET_ARN: storageBucket.bucketArn,
+        ACCOUNTS_TABLE_NAME: dynamoTable.tableName,
+        ACCOUNTS_TABLE_ARN: dynamoTable.tableArn,
+      },
+    });
+
+    // Grant S3 full permissions
+    storageBucket.grantReadWrite(fn);
+
+    // Add inline policy for S3 ListBucket
+    fn.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['s3:ListBucket'],
+        resources: [storageBucket.bucketArn],
+      })
+    );
+
+    // Grant DynamoDB permissions
+    dynamoTable.grantWriteData(fn);
+    dynamoTable.grantReadData(fn);
+
+    return fn;
   }
 
   /**
