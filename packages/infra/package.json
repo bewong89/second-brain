@@ -12,6 +12,14 @@
     "aws-cdk": "^2.x",
     "aws-cdk-lib": "^2.x",
     "constructs": "^10.x",
+    "esbuild": "^0.20.0",
     "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.500.0",
+    "@aws-sdk/client-s3": "^3.500.0",
+    "@aws-sdk/lib-dynamodb": "^3.500.0",
+    "@aws-sdk/lib-storage": "^3.500.0",
+    "@second-brain/interfaces": "workspace:*"
   }
 }
