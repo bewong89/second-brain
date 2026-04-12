@@ -11,10 +11,13 @@ import {
   aws_s3 as s3,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import { fileURLToPath } from 'url';
 import { StorageStack } from './storage-stack.js';
 import { DatabaseStack } from './database-stack.js';
 
 const STAGE_CONTEXT_KEY = 'stage';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = __filename.substring(0, __filename.lastIndexOf('/'));
 
 /**
  * APIStack - API Gateway infrastructure for Second Brain
@@ -151,7 +154,7 @@ export class ApiStack extends Stack {
       functionName: `second-brain-${stage}-${this.toKebabCase(name)}`,
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handler',
-      entry: `${__dirname}/handlers/${this.toKebabCase(name)}-handler.js`,
+      entry: `${__dirname}/handlers/${this.toKebabCase(name)}-handler.ts`,
       timeout: Duration.seconds(30),
       memorySize: 256,
       environment: {
@@ -187,7 +190,7 @@ export class ApiStack extends Stack {
       functionName: `second-brain-${stage}-${this.toKebabCase(name)}`,
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'handler',
-      entry: `${__dirname}/handlers/${this.toKebabCase(name)}-handler.js`,
+      entry: `${__dirname}/handlers/${this.toKebabCase(name)}-handler.ts`,
       timeout: Duration.seconds(30),
       memorySize: 256,
       environment: {
@@ -407,11 +410,11 @@ export class ApiStack extends Stack {
         integrationResponses: [
           {
             statusCode: '200',
-            responseParameters: [
-              ['method.response.header.Access-Control-Allow-Headers', "'Content-Type,Authorization,X-Api-Key'"],
-              ['method.response.header.Access-Control-Allow-Methods', "'GET,POST,OPTIONS'"],
-              ['method.response.header.Access-Control-Allow-Origin', "'*'"],
-            ],
+            responseParameters: {
+              'method.response.header.Access-Control-Allow-Headers': "'Content-Type,Authorization,X-Api-Key'",
+              'method.response.header.Access-Control-Allow-Methods': "'GET,POST,OPTIONS'",
+              'method.response.header.Access-Control-Allow-Origin': "'*'",
+            },
           },
         ],
         passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
