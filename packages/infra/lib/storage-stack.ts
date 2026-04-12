@@ -23,7 +23,6 @@ export class StorageStack extends Stack {
       versioned: true,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
 
-      // Lifecycle rules for intelligent tiering
       lifecycleRules: [
         {
           id: 'IntelligentTieringRule',
@@ -31,7 +30,7 @@ export class StorageStack extends Stack {
           transitions: [
             {
               storageClass: s3.StorageClass.INTELLIGENT_TIERING,
-              transitionAfter: undefined, // Move to intelligent tiering immediately
+              transitionAfter: Duration.days(0),
             },
             {
               storageClass: s3.StorageClass.GLACIER,
@@ -45,7 +44,6 @@ export class StorageStack extends Stack {
         },
       ],
 
-      // Encryption at rest
       encryption: s3.BucketEncryption.S3_MANAGED,
 
       // Enforce TLS
