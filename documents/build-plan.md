@@ -4,22 +4,22 @@
 
 | #   | Task                      | Description                                                                                          | Status |
 | --- | ------------------------- | ---------------------------------------------------------------------------------------------------- | ------ |
-| 1.1 | Root workspace            | Create root `package.json`, `pnpm-workspace.yaml` (pointing to `packages/*`), `.gitignore`, `.env.example` |        |
-| 1.2 | Shared TypeScript config  | Create `tsconfig.base.json` (strict, ES2022, NodeNext)                                               |        |
-| 1.3 | Package scaffolds         | Create empty `package.json` + `tsconfig.json` for all four packages: `interfaces`, `mcp-server`, `api`, `infra` |        |
-| 1.4 | Dependency install        | `pnpm install` to validate workspace resolution                                                     |        |
+| 1.1 | Root workspace            | Create root `package.json`, `pnpm-workspace.yaml` (pointing to `packages/*`), `.gitignore`, `.env.example` | Done   |
+| 1.2 | Shared TypeScript config  | Create `tsconfig.base.json` (strict, ES2022, NodeNext)                                               | Done   |
+| 1.3 | Package scaffolds         | Create empty `package.json` + `tsconfig.json` for all four packages: `interfaces`, `mcp-server`, `api`, `infra` | Done   |
+| 1.4 | Dependency install        | `pnpm install` to validate workspace resolution                                                     | Done   |
 
 ## Epic 2: Interfaces Package
 
 | #   | Task                 | Description                                                                                                    | Status |
 | --- | -------------------- | -------------------------------------------------------------------------------------------------------------- | ------ |
-| 2.1 | Enums                | Define `EntityType` (PERSONAL) and `EntitySection` (PERSONALITY, SKILLS, RULES) enums. Define `ENTITY_SECTIONS` constant. |        |
-| 2.2 | Entity types         | Define `EntityMetadata` interface matching entity metadata.json schema                                         |        |
-| 2.3 | Agent types          | Define `AgentMetadata` interface matching agent metadata.json schema                                           |        |
-| 2.4 | Brain content types  | Define `BrainFile`, `BrainSection`, `BrainAgent`, `BrainEntity`                                                |        |
-| 2.5 | Account types        | Define `Account`, `ApiKey` interfaces                                                                          |        |
-| 2.6 | Path utilities       | Implement `buildEntityFolderName`, `parseEntityFolderName`, `buildAgentFolderName`, `parseAgentFolderName`, `validateAgentName` |        |
-| 2.7 | Package exports      | Create barrel `index.ts`, configure `package.json` exports, verify compilation                                 |        |
+| 2.1 | Enums                | Define `EntityType` (PERSONAL) and `EntitySection` (PERSONALITY, SKILLS, RULES) enums. Define `ENTITY_SECTIONS` constant. | Done   |
+| 2.2 | Entity types         | Define `EntityMetadata` interface matching entity metadata.json schema                                         | Done   |
+| 2.3 | Agent types          | Define `AgentMetadata` interface matching agent metadata.json schema                                           | Done   |
+| 2.4 | Brain content types  | Define `BrainFile`, `BrainSection`, `BrainAgent`, `BrainEntity`                                                | Done   |
+| 2.5 | Account types        | Define `Account`, `ApiKey` interfaces                                                                          | Done   |
+| 2.6 | Path utilities       | Implement `buildEntityFolderName`, `parseEntityFolderName`, `buildAgentFolderName`, `parseAgentFolderName`, `validateAgentName` | Done   |
+| 2.7 | Package exports      | Create barrel `index.ts`, configure `package.json` exports, verify compilation                                 | Done   |
 
 ## Epic 3: Infrastructure (CDK)
 
@@ -30,8 +30,8 @@
 | 3.3 | DatabaseStack                 | DynamoDB Accounts table (PK: accountId) + ApiKeys table (PK: keyId, GSI on accountId)                                                                  | Done   |
 | 3.4 | ApiStack -- Lambda functions  | Create Lambda functions for user endpoints (list-entities, list-agents, get-agent, get-section) and admin endpoints (create-account, create-api-key, create-entity, create-agent). Wire IAM permissions to S3 + DynamoDB. | Done   |
 | 3.5 | ApiStack -- API Gateway       | REST API with `/api/*` and `/admin/*` route trees, Lambda proxy integrations                                                                           | Done   |
-| 3.6 | Composition stack             | `SecondBrainStack` that composes Storage + Database + Api stacks, passes references between them                                                       |        |
-| 3.7 | Synth and deploy              | Verify `cdk synth` produces valid CloudFormation, deploy to AWS                                                                                        |        |
+| 3.6 | Composition stack             | `SecondBrainStack` that composes Storage + Database + Api stacks, passes references between them                                                       | Done   |
+| 3.7 | Synth and deploy              | Verify `cdk synth` produces valid CloudFormation, deploy to AWS                                                                                        | Done   |
 
 ## Epic 4: Backend API
 
