@@ -18,6 +18,7 @@
     "admin": "tsx src/cli/admin.ts"
   },
   "dependencies": {
+    "@second-brain/interfaces": "workspace:*",
     "@aws-sdk/client-dynamodb": "^3.500.0",
     "@aws-sdk/client-s3": "^3.500.0",
     "@aws-sdk/lib-dynamodb": "^3.500.0",
