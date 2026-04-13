@@ -186,7 +186,25 @@ Examples:
   their specific operations
 - Never log full API keys -- log only the keyId prefix for debugging
 
-## Agent Workflow
+## Implementation Workflow
+
+### MANDATORY: Plan First, Then Execute
+
+**ALL implementation work must follow this flow:**
+
+1. **Analyze** the task and identify dependencies
+2. **Present** the execution plan with:
+   - Tasks that can run in parallel
+   - Tasks with dependencies (sequential order)
+   - Worktree/PR creation for each task
+3. **Wait** for explicit go-ahead before starting
+4. **Execute** using the coder subagent with worktrees
+5. **Create PR** after each task completes
+6. **Stop** and wait for PR review before continuing to dependent tasks
+
+**NEVER start implementing without presenting the plan first.**
+
+---
 
 ### Using the `coder` Subagent
 
