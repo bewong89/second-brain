@@ -10,6 +10,7 @@
   },
   "packageManager": "pnpm@9.15.9",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
     "@types/node": "^20.14.0",
     "tsx": "^4.21.0",
     "typescript": "^5.4.5",
