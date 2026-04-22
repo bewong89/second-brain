@@ -21,7 +21,20 @@ importers:
         specifier: ^2.1.0
         version: 2.1.9(@types/node@20.19.39)
 
-  packages/api: {}
+  packages/api:
+    dependencies:
+      '@aws-sdk/client-dynamodb':
+        specifier: ^3.500.0
+        version: 3.1029.0
+      '@aws-sdk/lib-dynamodb':
+        specifier: ^3.500.0
+        version: 3.1029.0(@aws-sdk/client-dynamodb@3.1029.0)
+      '@second-brain/interfaces':
+        specifier: workspace:*
+        version: link:../interfaces
+      zod:
+        specifier: ^3.23.0
+        version: 3.25.76
 
   packages/infra:
     dependencies:
@@ -1438,6 +1451,9 @@ packages:
   yn@3.1.1:
     resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
     engines: {node: '>=6'}
+
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
 snapshots:
 
@@ -3048,3 +3064,5 @@ snapshots:
       stackback: 0.0.2
 
   yn@3.1.1: {}
+
+  zod@3.25.76: {}
