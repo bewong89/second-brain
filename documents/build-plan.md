@@ -37,10 +37,10 @@
 
 | #   | Task                       | Description                                                                                                                                              | Status |
 | --- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 4.1 | Package setup              | Install dependencies (`@aws-sdk/client-s3`, `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `zod`), configure build                                |        |
-| 4.2 | Auth middleware             | Implement API key extraction, DynamoDB lookup, hash comparison, account context injection                                                                |        |
-| 4.3 | S3 service                 | Implement `listEntityFolders(accountId)`, `getEntityMetadata(folderId)`, `listAgents(folderId)`, `getAgentMetadata(folderId, agentName)`, `listSectionFiles(folderId, agentName, section)`, `getFileContent(...)`, `getFullAgent(folderId, agentName)` |        |
-| 4.4 | Account service            | Implement `createAccount`, `getAccount` in DynamoDB                                                                                                      |        |
+| 4.1 | Package setup              | Install dependencies (`@aws-sdk/client-s3`, `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `zod`), configure build                                | Done   |
+| 4.2 | Auth middleware             | Implement API key extraction, DynamoDB lookup, hash comparison, account context injection                                                                | Done   |
+| 4.3 | S3 service                 | Implement `listEntityFolders(accountId)`, `getEntityMetadata(folderId)`, `listAgents(folderId)`, `getAgentMetadata(folderId, agentName)`, `listSectionFiles(folderId, agentName, section)`, `getFileContent(...)`, `getFullAgent(folderId, agentName)` | Done   |
+| 4.4 | Account service            | Implement `createAccount`, `getAccount` in DynamoDB                                                                                                      | Done   |
 | 4.5 | API key service            | Implement `generateApiKey`, `validateApiKey`, `revokeApiKey` in DynamoDB                                                                                 |        |
 | 4.6 | User endpoint handlers     | Implement GET handlers: list-entities, list-agents, get-agent, get-section. Each validates auth + ownership.                                             |        |
 | 4.7 | Admin endpoint handlers    | Implement POST handlers: create-account, create-api-key, create-entity (creates S3 folder + metadata), create-agent (creates S3 agent folder + metadata) |        |
