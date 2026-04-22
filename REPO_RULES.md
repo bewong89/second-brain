@@ -206,6 +206,27 @@ Examples:
 
 ---
 
+### Task Completion: Update build-plan.md
+
+**After each task is complete (before creating PR):**
+
+1. Open `documents/build-plan.md`
+2. Find the task row in the Epic table
+3. Update the **Status** column to `Done`
+4. Include the PR number in the commit message
+
+This keeps the build plan current as work progresses.
+
+Example commit:
+```
+feat(api): implement S3 service
+
+Updates:
+- documents/build-plan.md - Mark 4.3 as Done
+```
+
+---
+
 ### Using the `coder` Subagent
 
 Use the `@coder` subagent for implementing features, fixing bugs, or making
