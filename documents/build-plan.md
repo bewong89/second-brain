@@ -44,7 +44,7 @@
 | 4.5 | API key service            | Implement `generateApiKey`, `validateApiKey`, `revokeApiKey` in DynamoDB                                                                                 | Done   |
 | 4.6 | User endpoint handlers     | Implement GET handlers: list-entities, list-agents, get-agent, get-section. Each validates auth + ownership.                                             | Done   |
 | 4.7 | Admin endpoint handlers    | Implement POST handlers: create-account, create-api-key, create-entity (creates S3 folder + metadata), create-agent (creates S3 agent folder + metadata) | Done   |
-| 4.8 | Admin CLI                  | CLI script wrapping admin endpoint logic for local use: `admin create-account`, `admin create-api-key`, `admin create-entity`, `admin create-agent`      |        |
+| 4.8 | Admin CLI                  | CLI script wrapping admin endpoint logic for local use: `admin create-account`, `admin create-api-key`, `admin create-entity`, `admin create-agent`      | Done   |
 | 4.9 | Authorization enforcement  | Ensure user endpoints verify `metadata.accountId === authenticated accountId`                                                                            |        |
 
 ## Epic 5: MCP Server
